@@ -1,43 +1,62 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const path = require('path');
-const app = express();
+<!DOCTYPE html>
+<html lang="en">
 
-app.use(cookieParser());
-app.use(express.static('public'));
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Iron Bank | Braavos</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Optional: Add Google Font for Cinzel -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<!-- ... rest of your HTML ... -->
 
-// Middleware to set default cookie on all routes
-app.use((req, res, next) => {
-    if (!req.cookies.role) {
-        res.cookie('role', 'commoner');
-    }
-    next();
-});
+<body>
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-});
+    <div class="container">
+        <header>
+            <h1>THE IRON BANK</h1>
+            <p class="subtitle">Braavos Terminal v4.0.1</p>
+        </header>
 
-// Handle both /treasury and /secret_vault routes
-app.get('/treasury', (req, res) => {
-    const userRole = req.cookies.role;
+        <main class="vault-interface">
+            <div class="status-box">
+                <h3>Identity Verified: <span id="user-role">Detecting...</span></h3>
+                <p id="access-msg">Scanning session tokens...</p>
+            </div>
 
-    if (userRole === 'Lord_Treasurer') {
-        res.send("<h1>Success!</h1><p>The Iron Throne is yours. Flag: <b>ByteMe{Easier_Than_The_Long_Night}</b></p>");
-    } else {
-        res.send(`<h1>Access Denied</h1><p>Your current role is '${userRole}'. Only the 'Lord_Treasurer' can enter.</p>`);
-    }
-});
+            <div class="actions">
+                <button onclick="location.href='/treasury'" class="btn-gold">Enter the Treasury</button>
+            </div>
+        </main>
 
-// Also keep the original /secret_vault route
-app.get('/secret_vault', (req, res) => {
-    const userRole = req.cookies.role;
+        <footer>
+            <p><i>“The Iron Bank will have its due.”</i></p>
+        </footer>
+    </div>
 
-    if (userRole === 'Lord_Treasurer') {
-        res.send("<h1>Success!</h1><p>The Iron Throne is yours. Flag: <b>ByteMe{Easier_Than_The_Long_Night}</b></p>");
-    } else {
-        res.send(`<h1>Access Denied</h1><p>Your current role is '${userRole}'. Only the 'Lord_Treasurer' can enter.</p>`);
-    }
-});
+    <script>
+        // Script to read the 'role' cookie
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return 'commoner';
+        };
 
-app.listen(3000, () => console.log('Easy CTF running on http://localhost:3000'));
+        const role = getCookie('role');
+        document.getElementById('user-role').innerText = role.replace('_', ' ');
+
+        if (role === 'Lord_Treasurer') {
+            document.getElementById('access-msg').innerText = "Welcome, My Lord. The gold awaits.";
+            document.getElementById('user-role').style.color = "#d4af37";
+        } else {
+            document.getElementById('access-msg').innerText = "Access Restricted: Sellswords and Commoners are not permitted.";
+            document.getElementById('user-role').style.color = "#ff4500";
+        }
+    </script>
+
+
+</body>
+
+</html>
