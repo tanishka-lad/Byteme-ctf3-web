@@ -56,7 +56,72 @@
         }
     </script>
 
+        <!-- Add this right after your existing script but before </body> -->
+    <script>
+        // ========================
+        // ANTI-INSPECT PROTECTION
+        // ========================
+        
+        // 1. Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('Right-click disabled in the Iron Bank!');
+        });
+        
+        // 2. Block keyboard shortcuts for DevTools
+        document.addEventListener('keydown', function(e) {
+            // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
+            if (
+                e.keyCode === 123 || // F12
+                (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
+                (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+                (e.ctrlKey && e.keyCode === 85) || // Ctrl+U (view source)
+                (e.ctrlKey && e.keyCode === 83) // Ctrl+S
+            ) {
+                e.preventDefault();
+                alert('Keyboard shortcut disabled!');
+                return false;
+            }
+        });
+        
+        // 3. Detect if DevTools is open
+        setInterval(function() {
+            const devToolsThreshold = 160;
+            const widthDiff = window.outerWidth - window.innerWidth;
+            const heightDiff = window.outerHeight - window.innerHeight;
+            
+            if (widthDiff > devToolsThreshold || heightDiff > devToolsThreshold) {
+                // DevTools detected - redirect or block
+                document.body.innerHTML = `
+                    <div style="text-align: center; padding: 50px; color: #ff4500;">
+                        <h1>⚠️ SECURITY BREACH DETECTED ⚠️</h1>
+                        <p>The Iron Bank forbids inspection tools!</p>
+                        <p>Close Developer Tools to continue...</p>
+                    </div>
+                `;
+                // Optional: redirect after delay
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+            }
+        }, 1000);
+        
+        // 4. Anti-debugger trap
+        setInterval(function() {
+            const start = new Date().getTime();
+            debugger;
+            const end = new Date().getTime();
+            
+            if (end - start > 100) {
+                // Debugger detected
+                window.location.reload();
+            }
+        }, 1000);
+    </script>
+
+
 
 </body>
 
 </html>
+
