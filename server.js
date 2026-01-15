@@ -6,11 +6,15 @@ const app = express();
 app.use(cookieParser());
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-    // Simply set a cookie that says "commoner"
+// Middleware to set default cookie on all routes
+app.use((req, res, next) => {
     if (!req.cookies.role) {
         res.cookie('role', 'commoner');
     }
+    next();
+});
+
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
