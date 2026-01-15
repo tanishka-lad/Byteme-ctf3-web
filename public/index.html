@@ -9,7 +9,6 @@
     <!-- Optional: Add Google Font for Cinzel -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<!-- ... rest of your HTML ... -->
 
 <body>
 
@@ -26,7 +25,7 @@
             </div>
 
             <div class="actions">
-                <button onclick="location.href='/treasury'" class="btn-gold">Enter the Treasury</button>
+                <button onclick="location.href='/secret_vault'" class="btn-gold">Enter the Treasury</button>
             </div>
         </main>
 
@@ -56,72 +55,58 @@
         }
     </script>
 
-        <!-- Add this right after your existing script but before </body> -->
+    <!-- ANTI-INSPECT PROTECTION SCRIPT -->
     <script>
-        // ========================
-        // ANTI-INSPECT PROTECTION
-        // ========================
-        
         // 1. Disable right-click
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            alert('Right-click disabled in the Iron Bank!');
         });
         
-        // 2. Block keyboard shortcuts for DevTools
+        // 2. Block keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
-            if (
-                e.keyCode === 123 || // F12
-                (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-                (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
-                (e.ctrlKey && e.keyCode === 85) || // Ctrl+U (view source)
-                (e.ctrlKey && e.keyCode === 83) // Ctrl+S
-            ) {
+            // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'i') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'j') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.key === 'U')) {
                 e.preventDefault();
-                alert('Keyboard shortcut disabled!');
-                return false;
             }
         });
         
-        // 3. Detect if DevTools is open
+        // 3. Detect DevTools by checking console size
         setInterval(function() {
-            const devToolsThreshold = 160;
-            const widthDiff = window.outerWidth - window.innerWidth;
-            const heightDiff = window.outerHeight - window.innerHeight;
-            
-            if (widthDiff > devToolsThreshold || heightDiff > devToolsThreshold) {
-                // DevTools detected - redirect or block
-                document.body.innerHTML = `
-                    <div style="text-align: center; padding: 50px; color: #ff4500;">
-                        <h1>⚠️ SECURITY BREACH DETECTED ⚠️</h1>
-                        <p>The Iron Bank forbids inspection tools!</p>
-                        <p>Close Developer Tools to continue...</p>
-                    </div>
-                `;
-                // Optional: redirect after delay
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 3000);
+            const threshold = 160;
+            if (window.outerWidth - window.innerWidth > threshold || 
+                window.outerHeight - window.innerHeight > threshold) {
+                // DevTools detected - redirect to home
+                window.location.href = '/';
             }
         }, 1000);
         
-        // 4. Anti-debugger trap
+        // 4. Debugger detection
         setInterval(function() {
-            const start = new Date().getTime();
+            const start = performance.now();
             debugger;
-            const end = new Date().getTime();
-            
+            const end = performance.now();
             if (end - start > 100) {
-                // Debugger detected
-                window.location.reload();
+                // Debugger detected - clear page
+                document.body.innerHTML = '<h1 style="color:#ff4500;text-align:center;margin-top:50px;">Iron Bank Security: Inspection Tools Detected</h1>';
             }
         }, 1000);
+        
+        // 5. Prevent element inspection via DOM mutation
+        const originalInnerHTML = document.body.innerHTML;
+        setInterval(function() {
+            if (document.body.innerHTML !== originalInnerHTML) {
+                document.body.innerHTML = originalInnerHTML;
+                window.location.href = '/';
+            }
+        }, 500);
     </script>
-
-
 
 </body>
 
 </html>
-
